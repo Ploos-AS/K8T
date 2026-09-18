@@ -15,7 +15,7 @@ class Connection:
  def __init__(self,profile): self.profile=profile; self.state=State.DISCONNECTED; self.attempts=0
  def start(self):
   self.state=State.DIALING if self.profile.transport=="modem" else State.CONNECTING
- def connected(self): self.state=State.CONNECTED; self.attempts=0
+ def connected(self): self.state=State.CONNECTED
  def lost(self):
   if self.attempts<self.profile.reconnect: self.attempts+=1; self.state=State.RECONNECT_WAIT
   else: self.state=State.FAILED
