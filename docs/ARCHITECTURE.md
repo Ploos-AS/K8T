@@ -8,31 +8,13 @@ Core services run on K8T-OS, not on a hidden Linux/ARM computer. Hardware helper
 
 ## CPU and memory
 
-### K8T CPU identity
+K8T uses the **WDC W65C265S** as its baseline processor. It provides a W65C816-compatible 8/16-bit CPU, 8-bit external data bus, 24-bit addressing, four integrated UARTs, interrupt facilities, timers and watchdog. The baseline clock is 8 MHz.
 
-K8T has its own CPU and ISA. It is explicitly independent of the K8 computer's CPU/ISA; K8 is not to be redesigned for K8T compatibility and binary compatibility between the machines is not a goal.
+K8T uses the commercial CPU directly; a custom FPGA CPU is no longer part of the architecture. FPGA use is optional and should be avoided when a dedicated IC, ordinary logic or a small CPLD provides a simpler/lower-cost solution.
 
-The K8T CPU must balance two first-class requirements: it must be powerful enough for the communications workload, and it must remain educational and maker-friendly. The architecture should be explainable from registers, buses, ALU and control sequencing rather than depending on opaque modern CPU features.
+K8T-OS targets native mode after boot and may use 16-bit accumulator/index operation. The native 24-bit address space replaces M1's provisional 64 KiB bank-window architecture. The platform has no fictional hardware supervisor mode or MMU; OS isolation must reflect the real W65C816/W65C265S architecture.
 
-FPGA is the reference implementation path for development and the performance-oriented K8T machine, but FPGA is not part of the ISA contract. The ISA and microarchitecture must deliberately remain practical to implement with CPLDs and, as an educational implementation, TTL/74xx-class logic. Avoid features whose only justification is an FPGA shortcut and which make a discrete implementation unreasonable.
-
-The K8T communications workload is the performance acceptance driver: four simultaneous RS-232 channels plus Ethernet, storage, local terminal activity and multitasking must be supportable without sacrificing the understandable 8-bit architecture.
-
-M0 requires an 8-bit data path, 16-bit logical addressing, 16-bit stack pointer, interrupts, reset/NMI path, software traps/system calls and efficient context switching. Initial target is approximately 12–16 MHz.
-
-Standard RAM target is 1 MiB, with at least 4 MiB physical addressing capability through explicit banking.
-
-Provisional logical map:
-
-| Range | Purpose |
-|---|---|
-| 0000–7FFF | process/local RAM |
-| 8000–BFFF | banked RAM window |
-| C000–DFFF | shared/kernel RAM |
-| E000–EFFF | memory-mapped I/O |
-| F000–FFFF | ROM/kernel vectors |
-
-M1 freezes the exact map.
+See [M2.0 platform baseline](M2_0_PLATFORM_BASELINE.md) for the current memory regions and implementation rules.
 
 ## Communications hardware
 
@@ -56,7 +38,7 @@ Keyboard and mouse are standard. Mouse use focuses on selection, copy/paste, scr
 
 ## Interrupts and reliability
 
-A prioritised interrupt controller covers timer, UART1–4, Ethernet, storage, video, keyboard, mouse, RTC and DMA. A hardware watchdog is required for unattended operation.
+The W65C265S interrupt facilities, timers and watchdog form the baseline. External Ethernet, storage, video and other devices are integrated into the interrupt design without recreating CPU/peripheral infrastructure in an FPGA.
 
 ## K8T-OS
 
@@ -82,4 +64,4 @@ A future qualification must demonstrate four active RS-232 connections, several 
 
 ## Deferred to M1+
 
-Exact K8T ISA details, register addresses beyond the M1 contract, banking refinement, device implementations, physical video/input connectors, scheduler quantum and K8TFS on-disk format remain intentionally open. M2 will freeze the K8T CPU/ISA baseline; it will not alter the K8 CPU.
+The CPU/ISA is now the documented W65C816-compatible W65C265S architecture. Remaining open items include exact external device mappings, physical video/input connectors, scheduler quantum/context ABI and K8TFS on-disk format.
