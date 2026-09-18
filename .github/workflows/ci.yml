@@ -12,14 +12,39 @@ jobs:
           python-version: '3.12'
       - name: Compile Python sources
         run: python -m compileall -q src tests
-      - name: Unit test files
-        shell: bash
-        run: |
-          set -o pipefail
-          failed=0
-          for test in tests/test_*.py; do
-            echo "::group::$test"
-            python -m unittest -v "${test%.py}" || failed=1
-            echo "::endgroup::"
-          done
-          exit "$failed"
+      - name: Test test_m1_6_feasibility
+        run: python -m unittest discover -s tests -p 'test_m1_6_feasibility.py' -v
+      - name: Test test_m2_10_messages
+        run: python -m unittest discover -s tests -p 'test_m2_10_messages.py' -v
+      - name: Test test_m2_11_files
+        run: python -m unittest discover -s tests -p 'test_m2_11_files.py' -v
+      - name: Test test_m2_12_fidonet
+        run: python -m unittest discover -s tests -p 'test_m2_12_fidonet.py' -v
+      - name: Test test_m2_13_terminal
+        run: python -m unittest discover -s tests -p 'test_m2_13_terminal.py' -v
+      - name: Test test_m2_14_terminal_compat
+        run: python -m unittest discover -s tests -p 'test_m2_14_terminal_compat.py' -v
+      - name: Test test_m2_15_terminal_ux
+        run: python -m unittest discover -s tests -p 'test_m2_15_terminal_ux.py' -v
+      - name: Test test_m2_16_platform_api
+        run: python -m unittest discover -s tests -p 'test_m2_16_platform_api.py' -v
+      - name: Test test_m2_1_scheduler
+        run: python -m unittest discover -s tests -p 'test_m2_1_scheduler.py' -v
+      - name: Test test_m2_2_kernel_abi
+        run: python -m unittest discover -s tests -p 'test_m2_2_kernel_abi.py' -v
+      - name: Test test_m2_3_bus
+        run: python -m unittest discover -s tests -p 'test_m2_3_bus.py' -v
+      - name: Test test_m2_4_serial
+        run: python -m unittest discover -s tests -p 'test_m2_4_serial.py' -v
+      - name: Test test_m2_5_network
+        run: python -m unittest discover -s tests -p 'test_m2_5_network.py' -v
+      - name: Test test_m2_6_storage
+        run: python -m unittest discover -s tests -p 'test_m2_6_storage.py' -v
+      - name: Test test_m2_7_bbs
+        run: python -m unittest discover -s tests -p 'test_m2_7_bbs.py' -v
+      - name: Test test_m2_8_auth
+        run: python -m unittest discover -s tests -p 'test_m2_8_auth.py' -v
+      - name: Test test_m2_9_kscript
+        run: python -m unittest discover -s tests -p 'test_m2_9_kscript.py' -v
+      - name: Test test_machine
+        run: python -m unittest discover -s tests -p 'test_machine.py' -v
