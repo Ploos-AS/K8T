@@ -10,7 +10,10 @@ M0 defines the machine and software contracts before implementation begins.
 
 K8T is specified around:
 
-- an 8-bit CPU with a 16-bit logical address space
+- its own K8T CPU and ISA, independent of the K8 computer
+- an educational and maker-friendly CPU architecture with FPGA as the reference implementation and realistic CPLD/TTL implementations kept as design constraints
+
+- a genuine 8-bit CPU/data path with a 16-bit logical address space
 - banked RAM for practical multitasking and caching
 - four first-class RS-232 ports
 - 100BASE-TX Ethernet
