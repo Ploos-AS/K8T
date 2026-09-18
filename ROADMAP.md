@@ -45,6 +45,10 @@ Cycle-budget qualification covers four 115200-bit/s UART streams, interrupt/pree
 See [docs/M1_6_W65C265S_FEASIBILITY.md](docs/M1_6_W65C265S_FEASIBILITY.md).
 
 ## M2 — K8T CPU and memory subsystem
+Status: **IN PROGRESS — M2.0 DONE**
+
+M2.0 freezes the W65C265S platform baseline, native 24-bit memory direction, real privilege model and minimum-FPGA hardware policy. Next: M2.1 scheduler/context ABI.
+
 Integrate and freeze the W65C265S-based CPU/memory architecture. K8 compatibility is explicitly not a goal and K8 is not changed.
 
 - educational and maker-friendly W65C265S architecture
