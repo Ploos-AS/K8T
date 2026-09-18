@@ -26,28 +26,32 @@ Status: **DONE**
 - CI checks
 
 ## M1.5 — CPU market survey
-Status: **DONE — selection pending feasibility test**
+Status: **DONE — W65C265S selected after M1.6 analytical qualification**
 
 - prefer a currently produced physical CPU over a custom FPGA CPU
 - minimize FPGA use
 - preserve educational and maker-friendly architecture
-- W65C02S is the leading strict-8-bit candidate
-- W65C265S is a strong alternative only if an 8/16-bit core is acceptable
-- next gate: W65C02S workload/throughput feasibility model
+- pure 8-bit operation is not a requirement; total system cost matters
+- W65C265S selected as baseline: 8/16-bit core, 24-bit external addressing, four UARTs, timers, interrupts and watchdog integrated
+- W65C02S retained as survey reference, not baseline
 
 See [docs/M1_5_CPU_SURVEY.md](docs/M1_5_CPU_SURVEY.md).
 
-## M1.6 — W65C02S feasibility
-Model/benchmark four 115200-bit/s UART streams, interrupt/preemption load, Ethernet, storage, ANSI rendering and BBS activity. Require practical headroom before CPU selection is frozen.
+## M1.6 — W65C265S feasibility
+Status: **ANALYTICAL PASS**
+
+Cycle-budget qualification covers four 115200-bit/s UART streams, interrupt/preemption load, Ethernet, storage, ANSI rendering and BBS activity. Reference model uses 36.5% of an 8 MHz CPU budget, leaving 63.5% analytical headroom. Physical hardware qualification remains mandatory.
+
+See [docs/M1_6_W65C265S_FEASIBILITY.md](docs/M1_6_W65C265S_FEASIBILITY.md).
 
 ## M2 — K8T CPU and memory subsystem
-Design and freeze the independent K8T CPU/ISA baseline. K8 compatibility is explicitly not a goal and K8 is not changed.
+Integrate and freeze the W65C265S-based CPU/memory architecture. K8 compatibility is explicitly not a goal and K8 is not changed.
 
-- educational and maker-friendly CPU architecture
-- genuine 8-bit data path and 16-bit logical addressing
-- instruction-set baseline and readable assembler syntax
-- FPGA reference implementation without making FPGA an ISA requirement
-- CPLD and TTL/74xx feasibility as explicit design constraints
+- educational and maker-friendly W65C265S architecture
+- 8/16-bit W65C816-compatible CPU with 8-bit external data bus and 24-bit addressing
+- readable 65C816 assembler/toolchain documentation
+- minimize FPGA; use ordinary logic or small CPLD only where justified
+- expose the external bus and memory/peripheral architecture clearly
 - banking, privilege/traps and efficient context switching
 - vectored/prioritised interrupt support suitable for four UARTs plus Ethernet/storage
 - timer-driven preemption
