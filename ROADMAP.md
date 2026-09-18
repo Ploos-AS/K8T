@@ -15,6 +15,7 @@ Status: **DONE**
 - concurrency acceptance target
 
 ## M1 — Executable machine model
+Status: **DONE**
 
 - freeze M1 register map
 - CPU programmer-visible state and reset/vector behaviour
