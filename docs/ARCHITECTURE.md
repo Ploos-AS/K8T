@@ -8,6 +8,16 @@ Core services run on K8T-OS, not on a hidden Linux/ARM computer. Hardware helper
 
 ## CPU and memory
 
+### K8T CPU identity
+
+K8T has its own CPU and ISA. It is explicitly independent of the K8 computer's CPU/ISA; K8 is not to be redesigned for K8T compatibility and binary compatibility between the machines is not a goal.
+
+The K8T CPU must balance two first-class requirements: it must be powerful enough for the communications workload, and it must remain educational and maker-friendly. The architecture should be explainable from registers, buses, ALU and control sequencing rather than depending on opaque modern CPU features.
+
+FPGA is the reference implementation path for development and the performance-oriented K8T machine, but FPGA is not part of the ISA contract. The ISA and microarchitecture must deliberately remain practical to implement with CPLDs and, as an educational implementation, TTL/74xx-class logic. Avoid features whose only justification is an FPGA shortcut and which make a discrete implementation unreasonable.
+
+The K8T communications workload is the performance acceptance driver: four simultaneous RS-232 channels plus Ethernet, storage, local terminal activity and multitasking must be supportable without sacrificing the understandable 8-bit architecture.
+
 M0 requires an 8-bit data path, 16-bit logical addressing, 16-bit stack pointer, interrupts, reset/NMI path, software traps/system calls and efficient context switching. Initial target is approximately 12–16 MHz.
 
 Standard RAM target is 1 MiB, with at least 4 MiB physical addressing capability through explicit banking.
@@ -72,4 +82,4 @@ A future qualification must demonstrate four active RS-232 connections, several 
 
 ## Deferred to M1+
 
-Exact ISA, register addresses, banking granularity, device implementations, physical video/input connectors, scheduler quantum and K8TFS on-disk format remain intentionally open.
+Exact K8T ISA details, register addresses beyond the M1 contract, banking refinement, device implementations, physical video/input connectors, scheduler quantum and K8TFS on-disk format remain intentionally open. M2 will freeze the K8T CPU/ISA baseline; it will not alter the K8 CPU.
