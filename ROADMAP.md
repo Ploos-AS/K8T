@@ -47,7 +47,7 @@ See [docs/M1_6_W65C265S_FEASIBILITY.md](docs/M1_6_W65C265S_FEASIBILITY.md).
 ## M2 — K8T CPU and memory subsystem
 Status: **IN PROGRESS — M2.0–M2.7 DONE**
 
-M2.0 freezes the W65C265S platform baseline, native 24-bit memory direction, real privilege model and minimum-FPGA hardware policy. M2.1 freezes the native-mode task context, private stacks, 1 kHz tick, 10 ms default quantum and priority/round-robin scheduler ABI. M2.2 freezes COP-based syscalls, error/register conventions and the bounded interrupt-service ABI. M2.3 freezes the BBS-first external bus direction: 2 MiB standard SRAM, 4 MiB onboard path, 512 KiB recovery flash, buffered controller apertures and cost/reliability-driven decode logic. M2.4 freezes four physical DTE DE-9 BBS/modem ports, one per integrated UART, with RTS/CTS, modem-control semantics and 1 KiB RX/TX rings. M2.5 freezes packet-level 10/100 Ethernet, an OS-owned TCP/IP stack and a 32-connection design floor so BBS networking is not constrained by hardware socket count. M2.6 freezes SSD/SD/flash roles, asynchronous block I/O, BBS durability classes, atomic intent/data/commit persistence and online snapshot semantics. M2.7 freezes one canonical BBS core across serial/Telnet, dynamic sessions, built-in groups, default-deny ACLs and canonical message/file objects with per-area publication surfaces. Next: M2.8 authentication, login flow and sysop/user management.
+M2.0 freezes the W65C265S platform baseline, native 24-bit memory direction, real privilege model and minimum-FPGA hardware policy. M2.1 freezes the native-mode task context, private stacks, 1 kHz tick, 10 ms default quantum and priority/round-robin scheduler ABI. M2.2 freezes COP-based syscalls, error/register conventions and the bounded interrupt-service ABI. M2.3 freezes the BBS-first external bus direction: 2 MiB standard SRAM, 4 MiB onboard path, 512 KiB recovery flash, buffered controller apertures and cost/reliability-driven decode logic. M2.4 freezes four physical DTE DE-9 BBS/modem ports, one per integrated UART, with RTS/CTS, modem-control semantics and 1 KiB RX/TX rings. M2.5 freezes packet-level 10/100 Ethernet, an OS-owned TCP/IP stack and a 32-connection design floor so BBS networking is not constrained by hardware socket count. M2.6 freezes SSD/SD/flash roles, asynchronous block I/O, BBS durability classes, atomic intent/data/commit persistence and online snapshot semantics. M2.7 freezes one canonical BBS core across serial/Telnet, dynamic sessions, built-in groups, default-deny ACLs and canonical message/file objects with per-area publication surfaces. Next: M2.8 authentication, login flow and sysop/user management, with door/session context and bulletin policy carried as first-class requirements.
 
 Integrate and freeze the W65C265S-based CPU/memory architecture. K8 compatibility is explicitly not a goal and K8 is not changed.
 
@@ -84,3 +84,46 @@ Physical RS-232 x4, Ethernet, SSD/SD, video, keyboard/mouse, watchdog/RTC and co
 
 ## M10 — Release qualification
 Four active serial links plus multiple TCP sessions, BBS, Gopher/HTTP, FidoNet/BinkP, local terminal/IRC and storage activity without lost serial data.
+
+
+## BBS scale, doors and bulletins
+
+These are architectural requirements, not optional future polish.
+
+### Scale
+
+Canonical durable object IDs use 32-bit identifiers for users, messages, files, message areas and file areas. There is no intentionally small user-visible limit such as 255 areas, 65,535 messages per area or a fixed files-per-area ceiling.
+
+Large BBS installations are disk-backed and indexed/paged. RAM use must scale with the active working set rather than the total number of messages/files. Practical capacity is therefore governed by storage, index format and performance rather than legacy BBS-era table limits.
+
+### ANSI bulletins
+
+Bulletins are first-class BBS objects/assets. A bulletin may have ANSI and plain-text representations and may be:
+
+- shown during login or logout;
+- selected from a bulletin menu;
+- targeted by ACL/group;
+- enabled for a date/time interval;
+- exposed only on selected node/transport classes.
+
+ANSI rendering includes color and cursor/control sequences appropriate to classic terminal presentation. Plain text is the required fallback.
+
+### Doors
+
+K8T has a native Door API. Doors receive a controlled session context rather than owning UART/TCP hardware directly. The context includes at least:
+
+- user identity and groups;
+- node/session identity;
+- transport and terminal capabilities;
+- remaining session time/policy;
+- terminal input/output;
+- permitted BBS message/file operations;
+- door-local storage/configuration.
+
+The same native door must work for serial and Telnet callers.
+
+Door execution is subject to ACL, time/resource policy and logging. A failed door must not terminate other BBS nodes.
+
+The compatibility roadmap includes classic drop-file adapters, beginning with investigation/qualification of DOOR.SYS and DORINFOx.DEF-style formats. Compatibility adapters map into the canonical K8T session model; they do not become a second user database.
+
+Door chaining, sysop-only doors, per-door ACLs and usage statistics are required capabilities.
