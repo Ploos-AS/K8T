@@ -2,7 +2,7 @@
 
 ## Identity and principles
 
-K8T is a genuine 8-bit communications workstation for terminal use, BBS hosting and classic/modern networking. It boots into the K8T environment; terminal and BBS are first-class applications.
+K8T is a BBS-first retro communications workstation for BBS hosting, terminal use and classic/modern networking. Its design is optimized for BBS culture, communications, reliable 24/7 operation and practical cost; K8/K16 carry the educational-computer role. It boots into the K8T environment; terminal and BBS are first-class applications.
 
 Core services run on K8T-OS, not on a hidden Linux/ARM computer. Hardware helpers may offload repetitive I/O but expose documented interfaces.
 
