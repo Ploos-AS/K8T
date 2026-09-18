@@ -45,9 +45,9 @@ Cycle-budget qualification covers four 115200-bit/s UART streams, interrupt/pree
 See [docs/M1_6_W65C265S_FEASIBILITY.md](docs/M1_6_W65C265S_FEASIBILITY.md).
 
 ## M2 — K8T CPU and memory subsystem
-Status: **IN PROGRESS — M2.0–M2.7 DONE**
+Status: **IN PROGRESS — M2.0–M2.8 DONE**
 
-M2.0 freezes the W65C265S platform baseline, native 24-bit memory direction, real privilege model and minimum-FPGA hardware policy. M2.1 freezes the native-mode task context, private stacks, 1 kHz tick, 10 ms default quantum and priority/round-robin scheduler ABI. M2.2 freezes COP-based syscalls, error/register conventions and the bounded interrupt-service ABI. M2.3 freezes the BBS-first external bus direction: 2 MiB standard SRAM, 4 MiB onboard path, 512 KiB recovery flash, buffered controller apertures and cost/reliability-driven decode logic. M2.4 freezes four physical DTE DE-9 BBS/modem ports, one per integrated UART, with RTS/CTS, modem-control semantics and 1 KiB RX/TX rings. M2.5 freezes packet-level 10/100 Ethernet, an OS-owned TCP/IP stack and a 32-connection design floor so BBS networking is not constrained by hardware socket count. M2.6 freezes SSD/SD/flash roles, asynchronous block I/O, BBS durability classes, atomic intent/data/commit persistence and online snapshot semantics. M2.7 freezes one canonical BBS core across serial/Telnet, dynamic sessions, built-in groups, default-deny ACLs and canonical message/file objects with per-area publication surfaces. Next: M2.8 authentication, login flow and sysop/user management, with door/session context and bulletin policy carried as first-class requirements.
+M2.0 freezes the W65C265S platform baseline, native 24-bit memory direction, real privilege model and minimum-FPGA hardware policy. M2.1 freezes the native-mode task context, private stacks, 1 kHz tick, 10 ms default quantum and priority/round-robin scheduler ABI. M2.2 freezes COP-based syscalls, error/register conventions and the bounded interrupt-service ABI. M2.3 freezes the BBS-first external bus direction: 2 MiB standard SRAM, 4 MiB onboard path, 512 KiB recovery flash, buffered controller apertures and cost/reliability-driven decode logic. M2.4 freezes four physical DTE DE-9 BBS/modem ports, one per integrated UART, with RTS/CTS, modem-control semantics and 1 KiB RX/TX rings. M2.5 freezes packet-level 10/100 Ethernet, an OS-owned TCP/IP stack and a 32-connection design floor so BBS networking is not constrained by hardware socket count. M2.6 freezes SSD/SD/flash roles, asynchronous block I/O, BBS durability classes, atomic intent/data/commit persistence and online snapshot semantics. M2.7 freezes one canonical BBS core across serial/Telnet, dynamic sessions, built-in groups, default-deny ACLs and canonical message/file objects with per-area publication surfaces. M2.8 freezes authentication/login, new-user/sysop management, mandatory native SSH, shared Telnet/SSH anti-bot admission control and KScript simple doors. Next: M2.9 menu/bulletin engine and KScript VM/API.
 
 Integrate and freeze the W65C265S-based CPU/memory architecture. K8 compatibility is explicitly not a goal and K8 is not changed.
 
@@ -239,7 +239,7 @@ The following are explicit product requirements and must be represented by imple
 - dial-out support for classic networking/maintenance where configured.
 
 ### Secure remote access
-SSH or an equivalent encrypted terminal/management path is a product goal. It must be benchmarked against W65C265S CPU/RAM limits before becoming mandatory. Telnet and serial operation must not depend on it. An external gateway remains a valid deployment option if native cryptography proves too costly.
+Native SSH is a product requirement for encrypted terminal/sysop access and must be benchmarked/optimized for W65C265S CPU/RAM limits. Telnet and serial remain independent. An external gateway is a valid deployment option but does not replace the native SSH requirement. Telnet and SSH share pre-auth admission/rate/failure controls to resist automated bot banging and resource exhaustion.
 
 ## Scripting architecture
 
@@ -274,6 +274,6 @@ Initial language facilities:
 
 Initial event hooks should include login, logout, new user, message posted, file uploaded/downloaded, door start/exit, node connect/disconnect, scheduled event and sysop-triggered execution.
 
-KScript is **not** intended to replace native doors. Native compiled doors remain the path for games and applications needing maximum performance. KScript is the safe automation/customization layer.
+KScript can implement simple interactive doors as well as automation/customization. Native compiled doors remain the path for games and applications needing maximum performance or low-level capabilities. Both use the controlled canonical Door API/session context.
 
 A later compatibility study may add a second scripting frontend or translator if a historically popular BBS language can map cleanly onto the KScript VM without compromising the core architecture.
