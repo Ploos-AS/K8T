@@ -104,6 +104,23 @@ Payload bytes remain in the file store; metadata is durable BBS state.
 
 Message and file areas own ACL/publication policy. This lets a sysop expose, for example, a public message area over BBS + Gopher + RSS while keeping a private sysop area local/Telnet only.
 
+
+## Scale requirements
+
+Users, messages, files, message areas and file areas use 32-bit stable IDs in durable formats. K8T deliberately avoids legacy small-table ceilings. Message/file indexes are disk-backed and paged so RAM consumption follows the active working set, not total BBS size.
+
+## ANSI bulletins
+
+Bulletins are first-class presentation objects with ANSI plus plain-text fallback. They can participate in login/logout presentation, bulletin menus, ACL/group targeting, scheduling and transport/node policy.
+
+## Door contract
+
+Doors execute against a controlled BBS session context and use canonical terminal/message/file APIs. They do not take ownership of serial or TCP devices. This makes a native K8T door transport-independent.
+
+Required capabilities include per-door ACLs, session-time policy, logging/statistics, door chaining, sysop-only doors and failure isolation.
+
+Classic compatibility adapters are planned, starting with qualification of DOOR.SYS and DORINFOx.DEF-style drop files. Imported compatibility state maps to the canonical K8T user/session model.
+
 ## M2.7 acceptance
 
 - one BBS core across serial and Telnet: PASS
@@ -115,5 +132,9 @@ Message and file areas own ACL/publication policy. This lets a sysop expose, for
 - canonical message/file records: PASS
 - per-area publication surfaces: PASS
 - session disconnect isolation: PASS
+- 32-bit durable object/area IDs and paged indexes: REQUIRED
+- ANSI/plain-text bulletin model: REQUIRED
+- transport-independent native Door API: REQUIRED
+- classic door drop-file compatibility investigation: REQUIRED
 
 Persistence wiring to the M2.6 transaction store and full authentication/password format are later implementation milestones.
