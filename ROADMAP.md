@@ -25,8 +25,18 @@ Status: **DONE**
 - deterministic register/memory-map tests
 - CI checks
 
-## M2 — CPU and memory subsystem
-Instruction-set baseline, assembler syntax, banking, privilege/traps, context switching and timer-driven preemption.
+## M2 — K8T CPU and memory subsystem
+Design and freeze the independent K8T CPU/ISA baseline. K8 compatibility is explicitly not a goal and K8 is not changed.
+
+- educational and maker-friendly CPU architecture
+- genuine 8-bit data path and 16-bit logical addressing
+- instruction-set baseline and readable assembler syntax
+- FPGA reference implementation without making FPGA an ISA requirement
+- CPLD and TTL/74xx feasibility as explicit design constraints
+- banking, privilege/traps and efficient context switching
+- vectored/prioritised interrupt support suitable for four UARTs plus Ethernet/storage
+- timer-driven preemption
+- architecture documentation sufficient to explain and eventually build the CPU
 
 ## M3 — Console and ANSI terminal
 Text video, keyboard/mouse, virtual consoles, ANSI renderer, scrollback/copy-paste and serial terminal sessions.
