@@ -1,6 +1,6 @@
 # M1.5 CPU Market Survey
 
-Status: **SURVEY COMPLETE — selection not yet frozen**
+Status: **SURVEY COMPLETE — W65C265S SELECTED AFTER M1.6 ANALYTICAL PASS**
 
 ## Goal
 
@@ -8,7 +8,8 @@ K8T should use a real, commercially available processor where practical. A custo
 
 Hard requirements:
 
-- 8-bit machine identity
+- retro 8/16-bit machine identity; strict 8-bit CPU operation is not required
+- total system/BOM cost matters more than CPU unit price alone
 - suitable for a new design rather than depending on obsolete stock
 - documented architecture and toolchain
 - maker/education friendly
@@ -33,13 +34,13 @@ Hard requirements:
 
 The W65C265S deserves a separate decision because its peripheral set almost reads like a K8T requirement list: external memory bus, 8-bit data bus, 24-bit address bus, four UARTs, 29 priority-encoded interrupts, eight timers and watchdog.
 
-However, its CPU core is W65C816-derived and therefore an 8/16-bit architecture. If K8T must be a strictly 8-bit CPU, it is disqualified despite the excellent hardware fit.
+Its W65C816-derived 8/16-bit core is acceptable. This removes the earlier strict-8-bit objection and makes its integration especially attractive because total system cost and component count matter.
 
 ## Current direction
 
-If strict 8-bit CPU semantics remain non-negotiable, **W65C02S is the leading candidate**.
+Strict 8-bit CPU semantics are not required. **W65C265S is the selected baseline candidate after M1.6 analytical qualification.**
 
-A W65C02S K8T would deliberately place complexity in visible peripheral hardware:
+For comparison, a W65C02S design would place substantially more complexity in external peripheral hardware:
 
 - W65C02S CPU
 - external bank/page memory controller using ordinary logic or a small CPLD
@@ -54,7 +55,7 @@ This preserves the educational value: address bus, data bus, memory decode and I
 
 ## Performance question to prove before selection
 
-The remaining risk is CPU throughput. A 14 MHz W65C02S must be benchmarked against a synthetic K8T workload before it is frozen:
+The remaining selection risk was CPU throughput at the W65C265S maximum specified 8 MHz. M1.6 therefore models the target workload:
 
 1. four simultaneous 115200-bit/s serial RX/TX streams with FIFO-backed UARTs;
 2. timer-driven preemption and context switching;
@@ -67,10 +68,4 @@ The CPU does not need to bit-bang these interfaces. Dedicated controllers and FI
 
 ## Decision gate
 
-Do not freeze M2 CPU architecture until M1.6 has produced a workload/performance model for W65C02S and compared it with the strongest acceptable alternative.
-
-The survey therefore recommends:
-
-**M1.6 — W65C02S feasibility prototype and workload model.**
-
-If it passes with reasonable headroom, select W65C02S. If it fails, revisit W65C265S (if 8/16-bit is acceptable) or another currently produced 8-bit processor without changing K8.
+M1.6 produced an analytical PASS for W65C265S with 63.5% reference headroom at 8 MHz. W65C265S is therefore selected as the M2 baseline, while physical hardware qualification remains mandatory before release.
