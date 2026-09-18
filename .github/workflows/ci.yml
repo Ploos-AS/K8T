@@ -12,5 +12,14 @@ jobs:
           python-version: '3.12'
       - name: Compile Python sources
         run: python -m compileall -q src tests
-      - name: M1 machine-model tests
-        run: python -m unittest discover -s tests -v
+      - name: Unit test files
+        shell: bash
+        run: |
+          set -o pipefail
+          failed=0
+          for test in tests/test_*.py; do
+            echo "::group::$test"
+            python -m unittest -v "${test%.py}" || failed=1
+            echo "::endgroup::"
+          done
+          exit "$failed"
