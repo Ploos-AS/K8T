@@ -4,9 +4,9 @@ class M215(unittest.TestCase):
  def test_transports(self):
   for t in ("serial","modem","telnet","ssh"): self.assertEqual(Profile(1,t,t,"x").transport,t)
  def test_modem_dials(self):
-  c=Connection(Profile(1,"bbs","modem","555",1)); c.start(); self.assertEqual(c.state,State.DIALING)
+  c=Connection(Profile(1,"bbs","modem","555",reconnect=1)); c.start(); self.assertEqual(c.state,State.DIALING)
  def test_bounded_reconnect(self):
-  c=Connection(Profile(1,"bbs","telnet","x",2)); c.start(); c.connected(); c.lost(); self.assertEqual(c.state,State.RECONNECT_WAIT)
+  c=Connection(Profile(1,"bbs","telnet","x",reconnect=2)); c.start(); c.connected(); c.lost(); self.assertEqual(c.state,State.RECONNECT_WAIT)
   c.retry(); c.lost(); self.assertEqual(c.state,State.RECONNECT_WAIT)
   c.retry(); c.lost(); self.assertEqual(c.state,State.FAILED)
  def test_scrollback_ring_and_search(self):
