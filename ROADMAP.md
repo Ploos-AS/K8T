@@ -127,3 +127,26 @@ Door execution is subject to ACL, time/resource policy and logging. A failed doo
 The compatibility roadmap includes classic drop-file adapters, beginning with investigation/qualification of DOOR.SYS and DORINFOx.DEF-style formats. Compatibility adapters map into the canonical K8T session model; they do not become a second user database.
 
 Door chaining, sysop-only doors, per-door ACLs and usage statistics are required capabilities.
+
+
+## Observability and home automation integration
+
+K8T remains fully standalone: monitoring and home-automation systems are optional integrations, never runtime dependencies.
+
+### Prometheus
+
+Provide a lightweight Prometheus-compatible `/metrics` endpoint. Candidate metrics include uptime/reset cause, active nodes/sessions by transport, calls, message/file activity, transfer counters, FidoNet queue depth, free storage, memory pressure, network errors, UART overruns, watchdog events and available board health sensors.
+
+Metrics collection must be bounded and must not materially disturb BBS callers.
+
+### MQTT and Home Assistant
+
+Provide an optional MQTT client for telemetry and carefully scoped control. Support Home Assistant MQTT Discovery so a K8T can appear automatically as a device with useful entities.
+
+Candidate entities include online callers, per-node state, calls today, FidoNet queue, disk free, uptime, health/alarm state and available environmental/board sensors.
+
+Read-only telemetry is the default. Remote actions such as maintenance mode, backup, reboot or shutdown require explicit configuration, authentication/authorization and audit logging. No remote integration may bypass the BBS ACL or management policy.
+
+### Later integration candidates
+
+The management API should be transport-neutral enough to support SNMP-style monitoring, webhooks and external dashboards later without coupling the BBS core to any one ecosystem.
