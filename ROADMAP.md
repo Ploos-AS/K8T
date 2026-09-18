@@ -25,6 +25,21 @@ Status: **DONE**
 - deterministic register/memory-map tests
 - CI checks
 
+## M1.5 — CPU market survey
+Status: **DONE — selection pending feasibility test**
+
+- prefer a currently produced physical CPU over a custom FPGA CPU
+- minimize FPGA use
+- preserve educational and maker-friendly architecture
+- W65C02S is the leading strict-8-bit candidate
+- W65C265S is a strong alternative only if an 8/16-bit core is acceptable
+- next gate: W65C02S workload/throughput feasibility model
+
+See [docs/M1_5_CPU_SURVEY.md](docs/M1_5_CPU_SURVEY.md).
+
+## M1.6 — W65C02S feasibility
+Model/benchmark four 115200-bit/s UART streams, interrupt/preemption load, Ethernet, storage, ANSI rendering and BBS activity. Require practical headroom before CPU selection is frozen.
+
 ## M2 — K8T CPU and memory subsystem
 Design and freeze the independent K8T CPU/ISA baseline. K8 compatibility is explicitly not a goal and K8 is not changed.
 
