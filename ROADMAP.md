@@ -150,3 +150,130 @@ Read-only telemetry is the default. Remote actions such as maintenance mode, bac
 ### Later integration candidates
 
 The management API should be transport-neutral enough to support SNMP-style monitoring, webhooks and external dashboards later without coupling the BBS core to any one ecosystem.
+
+
+## BBS completeness requirements
+
+The following are explicit product requirements and must be represented by implementation milestones before a production release.
+
+### Events and scheduler
+- recurring and one-shot BBS events;
+- FidoNet mail events and maintenance windows;
+- scheduled backup, log rotation, bulletin rotation and script/door launch;
+- missed-event policy after reboot or downtime.
+
+### Sysop and inter-node communication
+- caller-to-sysop page/chat;
+- local sysop console attachment to a caller;
+- inter-node chat between serial and network callers;
+- presence/node listing subject to privacy policy.
+
+### Terminal profiles
+- ANSI and plain ASCII baseline;
+- VT100/VT220-compatible behavior where practical;
+- terminal width/height and capability negotiation/profile;
+- UTF-8 on capable network terminals without making it mandatory internally;
+- PETSCII compatibility is a planned extension for Commodore callers.
+
+### File-transfer protocols
+- XMODEM;
+- YMODEM;
+- ZMODEM as a required first-class protocol;
+- transfer accounting, resume where protocol permits, ACL/quota integration and clean abort.
+
+### Full FidoNet subsystem
+- BinkP;
+- netmail and echomail;
+- packet/bundle handling;
+- toss/scan;
+- nodelist support;
+- routing;
+- scheduled mail events;
+- canonical mapping into K8T message areas and ACL/publication policy.
+
+### Call history and statistics
+- Last Callers;
+- calls today/total;
+- per-node and per-transport statistics;
+- uploads/downloads and transfer volume;
+- message activity;
+- door usage;
+- selected counters exported through Prometheus.
+
+### Audit
+- sysop/admin actions;
+- failed authentication and lockout/ban events;
+- ACL and configuration changes;
+- door administration;
+- remote management actions including MQTT/Home Assistant;
+- durable timestamped audit records with bounded retention policy.
+
+### Backup, restore and migration
+- consistent online backup;
+- full restore;
+- configuration export/import;
+- SD-based recovery/migration;
+- ability to move a BBS installation to replacement K8T hardware without rebuilding it manually.
+
+### Time
+- battery-backed RTC;
+- NTP synchronization when networking is available;
+- monotonic runtime clock for timers;
+- explicit handling of invalid RTC/time jumps;
+- timestamps suitable for BBS, FidoNet, audit and scheduled events.
+
+### Power-fail and UPS
+- optional power-fail/UPS input;
+- early warning path to storage/kernel;
+- stop or bound new durable commits during imminent power loss;
+- flush critical persistence state when available hold-up time permits;
+- reset/power-loss cause visible to sysop and monitoring.
+
+### Modems
+- Hayes AT-compatible modem operation;
+- init strings and modem profiles;
+- auto-answer;
+- DCD/carrier handling;
+- DTR hangup/reset;
+- configurable baud/framing/flow control;
+- dial-out support for classic networking/maintenance where configured.
+
+### Secure remote access
+SSH or an equivalent encrypted terminal/management path is a product goal. It must be benchmarked against W65C265S CPU/RAM limits before becoming mandatory. Telnet and serial operation must not depend on it. An external gateway remains a valid deployment option if native cryptography proves too costly.
+
+## Scripting architecture
+
+K8T will have a **small native BBS scripting language/VM** rather than embedding a large general-purpose language as a core dependency.
+
+Working name: **KScript** (name is provisional).
+
+Design goals:
+
+- text source files that are easy for a sysop to edit;
+- compact bytecode/intermediate representation for execution;
+- deterministic bounded memory usage;
+- cooperative execution with instruction/time budgets;
+- no raw memory, UART, disk-sector or network-controller access;
+- capability-based access to the canonical BBS API;
+- event-driven hooks and scheduled scripts;
+- scripts can be used by menus, login/logout, bulletins, moderation, automation and doors;
+- the same API model is available regardless of serial/Telnet caller transport;
+- script failure terminates only that script invocation.
+
+Initial language facilities:
+
+- integer, boolean and string values;
+- variables and constants;
+- if/else;
+- loops with execution budgets;
+- functions/subroutines;
+- lists/maps only if they fit the measured memory budget;
+- BBS API calls;
+- event handlers;
+- explicit return/error handling.
+
+Initial event hooks should include login, logout, new user, message posted, file uploaded/downloaded, door start/exit, node connect/disconnect, scheduled event and sysop-triggered execution.
+
+KScript is **not** intended to replace native doors. Native compiled doors remain the path for games and applications needing maximum performance. KScript is the safe automation/customization layer.
+
+A later compatibility study may add a second scripting frontend or translator if a historically popular BBS language can map cleanly onto the KScript VM without compromising the core architecture.
