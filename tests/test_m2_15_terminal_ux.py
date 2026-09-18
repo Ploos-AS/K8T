@@ -6,8 +6,8 @@ class M215(unittest.TestCase):
  def test_modem_dials(self):
   c=Connection(Profile(1,"bbs","modem","555",1)); c.start(); self.assertEqual(c.state,State.DIALING)
  def test_bounded_reconnect(self):
-  c=Connection(Profile(1,"bbs","telnet","x",1)); c.start(); c.connected(); c.lost(); self.assertEqual(c.state,State.RECONNECT_WAIT)
-  c.retry(); c.lost(); self.assertEqual(c.state,State.FAILED)
+  c=Connection(Profile(1,"bbs","telnet","x",2)); c.start(); c.connected(); c.lost(); self.assertEqual(c.state,State.RECONNECT_WAIT)
+  c.retry(); c.lost(); self.assertEqual(c.state,State.RECONNECT_WAIT)\n  c.retry(); c.lost(); self.assertEqual(c.state,State.FAILED)
  def test_scrollback_ring_and_search(self):
   s=Scrollback(2); s.add("one"); s.add("BBS hello"); s.add("three")
   self.assertEqual(list(s.lines),["BBS hello","three"]); self.assertEqual(s.search("bbs"),["BBS hello"])
