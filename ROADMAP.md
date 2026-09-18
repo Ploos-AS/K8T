@@ -279,6 +279,24 @@ KScript can implement simple interactive doors as well as automation/customizati
 A later compatibility study may add a second scripting frontend or translator if a historically popular BBS language can map cleanly onto the KScript VM without compromising the core architecture.
 
 
+## Sysop ANSI customization
+
+K8T BBS is explicitly designed for SysOps who want to give their board a distinct visual identity rather than accept a fixed UI.
+
+- ANSI-first customizable login/welcome/goodbye screens, menus, prompts, headers, footers, bulletins, help, error/status screens and door launch/return screens;
+- plain-text fallback for non-ANSI callers, with PETSCII/profile-specific presentation possible through the same presentation layer;
+- editable ANSI assets stored as ordinary BBS content with stable logical names, not compiled into the BBS executable;
+- per-menu and per-command ANSI artwork, including hotkeys and cursor-positioned interfaces;
+- variables/tokens for user, node, time, statistics, message/file counts and other safe BBS state;
+- conditional presentation by user group, terminal profile, geometry, node/transport, date/time and KScript policy;
+- KScript can select screens, compose dynamic sections and implement custom menu flows without bypassing ACL/security;
+- themes/packs can replace a complete visual identity and can be exported/imported/backed up;
+- preview/test mode for SysOps before publishing changed screens;
+- versioned/atomic publication so a caller never sees a half-written ANSI screen;
+- ANSI art remains SysOp-owned content and is included in backup/migration.
+
+The default distribution should be usable immediately, but almost every caller-facing BBS presentation surface should be replaceable without recompiling K8T-OS.
+
 ## Terminal subsystem as a product pillar
 
 The terminal is equal in importance to the BBS and must be beyond first-class: excellent ANSI/VT and PETSCII support, CP437/BBS rendering, scrollback/search, copy/paste, macros, capture, transfer protocols, modem profiles, phonebook and serial/Telnet/SSH transports. The emulation/state-machine core must be portable and hardware-independent so it can later underpin native terminal applications for Amiga and Atari ST (and potentially additional retro platforms). See `docs/TERMINAL_SUBSYSTEM.md`.
