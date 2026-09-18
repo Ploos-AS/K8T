@@ -10,5 +10,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Compile Python sources
+        run: python -m compileall -q src tests
       - name: M1 machine-model tests
-        run: |\n          python -m compileall -q src tests\n          python -m unittest discover -s tests -v
+        run: python -m unittest discover -s tests -v
