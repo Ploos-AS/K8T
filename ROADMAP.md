@@ -45,9 +45,9 @@ Cycle-budget qualification covers four 115200-bit/s UART streams, interrupt/pree
 See [docs/M1_6_W65C265S_FEASIBILITY.md](docs/M1_6_W65C265S_FEASIBILITY.md).
 
 ## M2 — K8T CPU and memory subsystem
-Status: **IN PROGRESS — M2.0/M2.1/M2.2 DONE**
+Status: **IN PROGRESS — M2.0–M2.3 DONE**
 
-M2.0 freezes the W65C265S platform baseline, native 24-bit memory direction, real privilege model and minimum-FPGA hardware policy. M2.1 freezes the native-mode task context, private stacks, 1 kHz tick, 10 ms default quantum and priority/round-robin scheduler ABI. M2.2 freezes COP-based syscalls, error/register conventions and the bounded interrupt-service ABI. Next: M2.3 external bus, RAM/ROM and address-decode baseline.
+M2.0 freezes the W65C265S platform baseline, native 24-bit memory direction, real privilege model and minimum-FPGA hardware policy. M2.1 freezes the native-mode task context, private stacks, 1 kHz tick, 10 ms default quantum and priority/round-robin scheduler ABI. M2.2 freezes COP-based syscalls, error/register conventions and the bounded interrupt-service ABI. M2.3 freezes the BBS-first external bus direction: 2 MiB standard SRAM, 4 MiB onboard path, 512 KiB recovery flash, buffered controller apertures and cost/reliability-driven decode logic. Next: M2.4 physical serial/RS-232 subsystem.
 
 Integrate and freeze the W65C265S-based CPU/memory architecture. K8 compatibility is explicitly not a goal and K8 is not changed.
 
