@@ -2,7 +2,7 @@
 
 K8T is a retro 8/16-bit communications terminal and BBS computer.
 
-Its purpose is to combine a first-class local terminal, a multitasking BBS, classic serial communications and modern Ethernet services in one understandable machine architecture.
+Its primary purpose is to cultivate BBSing: a dedicated multitasking BBS computer combining classic serial communications, a first-class local terminal and modern Ethernet services. K8T prioritizes BBS capability, 24/7 reliability, communications throughput and practical BOM cost; K8 and K16 cover the educational-computer role.
 
 ## M0 goals
 
