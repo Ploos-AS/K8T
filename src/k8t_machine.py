@@ -1,86 +1,85 @@
-"""K8T M1 executable machine model."""
+"""K8T M2.0 platform model for the W65C265S baseline.
 
-RAM_SIZE = 1 << 20
-IO_BASE = 0xE000
-IO_END = 0xEFFF
-ROM_BASE = 0xF000
+This is a platform/address-space oracle, not a CPU emulator.  Instruction
+semantics belong to the documented W65C816-compatible processor.
+"""
 
-BANK_REG_LO = 0xE000
-BANK_REG_HI = 0xE001
-IRQ_PENDING = 0xE010
-IRQ_MASK = 0xE011
-TIMER_LO = 0xE020
-TIMER_HI = 0xE021
-UART_BASE = 0xE100
-UART_STRIDE = 0x10
+ADDRESS_MASK = 0xFFFFFF
+ADDRESS_SPACE = 1 << 24
+CPU_HZ = 8_000_000
+
+BANK0_END = 0x00FFFF
+RAM_BASE = 0x010000
+RAM_END = 0x7FFFFF
+EXPANSION_BASE = 0x800000
+EXPANSION_END = 0xDFFFFF
+PLATFORM_IO_BASE = 0xE00000
+PLATFORM_IO_END = 0xEFFFFF
+ROM_BASE = 0xF00000
+ROM_END = 0xFFFFFF
 UART_COUNT = 4
 
 class K8TMachine:
-    def __init__(self):
-        self.ram = bytearray(RAM_SIZE)
-        self.rom = bytearray(0x1000)
-        self.bank = 0
-        self.irq_pending = 0
-        self.irq_mask = 0
-        self.timer_reload = 0
-        self.uart = [bytearray(UART_STRIDE) for _ in range(UART_COUNT)]
+    """Minimal M2 platform state; not a W65C816 instruction emulator."""
+
+    def __init__(self, ram_size=1 << 20, rom_size=1 << 20):
+        if ram_size < 0 or ram_size > (RAM_END - RAM_BASE + 1):
+            raise ValueError("RAM size outside M2 primary RAM window")
+        if rom_size < 0 or rom_size > (ROM_END - ROM_BASE + 1):
+            raise ValueError("ROM size outside M2 ROM window")
+        self.bank0 = bytearray(1 << 16)
+        self.ram = bytearray(ram_size)
+        self.rom = bytearray(rom_size)
+        self.platform_io = {}
+        self.uart = [bytearray() for _ in range(UART_COUNT)]
         self.reset()
 
     def reset(self):
-        self.a = self.x = self.y = 0
-        self.sp = 0xDFFF
-        self.pc = 0xF000
-        self.flags = 0
-        self.supervisor = True
+        # Architectural reset starts in W65C816 emulation mode.
+        self.emulation = True
+        self.native_mode = False
 
-    def _physical_ram(self, addr):
-        if 0x8000 <= addr <= 0xBFFF:
-            return ((self.bank * 0x4000) + (addr - 0x8000)) % RAM_SIZE
-        return addr
+    @staticmethod
+    def normalize_address(addr):
+        return addr & ADDRESS_MASK
+
+    def region(self, addr):
+        addr = self.normalize_address(addr)
+        if addr <= BANK0_END: return "bank0"
+        if RAM_BASE <= addr <= RAM_END: return "ram"
+        if EXPANSION_BASE <= addr <= EXPANSION_END: return "expansion"
+        if PLATFORM_IO_BASE <= addr <= PLATFORM_IO_END: return "io"
+        return "rom"
+
+    def enter_native_mode(self):
+        self.emulation = False
+        self.native_mode = True
 
     def read8(self, addr):
-        addr &= 0xFFFF
-        if IO_BASE <= addr <= IO_END:
-            return self._io_read(addr)
-        if addr >= ROM_BASE:
-            return self.rom[addr - ROM_BASE]
-        return self.ram[self._physical_ram(addr)]
-
-    def write8(self, addr, value):
-        addr &= 0xFFFF
-        value &= 0xFF
-        if IO_BASE <= addr <= IO_END:
-            self._io_write(addr, value)
-        elif addr < ROM_BASE:
-            self.ram[self._physical_ram(addr)] = value
-
-    def _io_read(self, addr):
-        if addr == BANK_REG_LO: return self.bank & 0xFF
-        if addr == BANK_REG_HI: return (self.bank >> 8) & 0xFF
-        if addr == IRQ_PENDING: return self.irq_pending
-        if addr == IRQ_MASK: return self.irq_mask
-        if addr == TIMER_LO: return self.timer_reload & 0xFF
-        if addr == TIMER_HI: return (self.timer_reload >> 8) & 0xFF
-        if UART_BASE <= addr < UART_BASE + UART_COUNT * UART_STRIDE:
-            n=(addr-UART_BASE)//UART_STRIDE
-            off=(addr-UART_BASE)%UART_STRIDE
-            return self.uart[n][off]
+        addr = self.normalize_address(addr)
+        region = self.region(addr)
+        if region == "bank0":
+            return self.bank0[addr]
+        if region == "ram":
+            off = addr - RAM_BASE
+            return self.ram[off] if off < len(self.ram) else 0xFF
+        if region == "io":
+            return self.platform_io.get(addr, 0xFF)
+        if region == "rom":
+            off = addr - ROM_BASE
+            return self.rom[off] if off < len(self.rom) else 0xFF
         return 0xFF
 
-    def _io_write(self, addr, value):
-        if addr == BANK_REG_LO:
-            self.bank=(self.bank & 0xFF00)|value
-        elif addr == BANK_REG_HI:
-            self.bank=((value << 8)|(self.bank & 0xFF)) & 0x3F
-        elif addr == IRQ_PENDING:
-            self.irq_pending &= ~value
-        elif addr == IRQ_MASK:
-            self.irq_mask=value
-        elif addr == TIMER_LO:
-            self.timer_reload=(self.timer_reload & 0xFF00)|value
-        elif addr == TIMER_HI:
-            self.timer_reload=(value << 8)|(self.timer_reload & 0xFF)
-        elif UART_BASE <= addr < UART_BASE + UART_COUNT * UART_STRIDE:
-            n=(addr-UART_BASE)//UART_STRIDE
-            off=(addr-UART_BASE)%UART_STRIDE
-            self.uart[n][off]=value
+    def write8(self, addr, value):
+        addr = self.normalize_address(addr)
+        value &= 0xFF
+        region = self.region(addr)
+        if region == "bank0":
+            self.bank0[addr] = value
+        elif region == "ram":
+            off = addr - RAM_BASE
+            if off < len(self.ram):
+                self.ram[off] = value
+        elif region == "io":
+            self.platform_io[addr] = value
+        # expansion is device-owned and ROM is read-only in this oracle.
