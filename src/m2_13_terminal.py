@@ -39,7 +39,7 @@ class ANSI:
   elif final=="B": self.s.y=min(self.s.h-1,self.s.y+(n[0] or 1))
   elif final=="C": self.s.x=min(self.s.w-1,self.s.x+(n[0] or 1))
   elif final=="D": self.s.x=max(0,self.s.x-(n[0] or 1))
-  elif final=="J" and (n[0] in (0,2)): self.s.clear()
+  elif final=="J" and (n[0] in (0,2)): self.s.clear()\n  elif final=="m":\n   for p in n:\n    if p==0: self.s.fg=7; self.s.bg=0; self.s.bold=False; self.s.reverse=False\n    elif p==1: self.s.bold=True\n    elif p==7: self.s.reverse=True\n    elif p==22: self.s.bold=False\n    elif p==27: self.s.reverse=False\n    elif 30<=p<=37: self.s.fg=p-30\n    elif p==39: self.s.fg=7\n    elif 40<=p<=47: self.s.bg=p-40\n    elif p==49: self.s.bg=0
 
 class PETSCII:
  @staticmethod
